@@ -6,7 +6,9 @@ extern crate opengl_graphics;
 TODO
 decide between ImageBuffer or RgbaImage for image
 clean up types, specifically in sense function
-feels very 45 degree angle ish
+still very 45 degrees ish
+store agents in vec(heap) instead of arr(stack)?
+spawn enum with angle = rngangle + pi/2
 */
 
 use piston_window::*;
@@ -29,6 +31,16 @@ const SENSOR_OFFSET_ANGLE: f64 = 0.3;
 const SENSOR_OFFSET_DST: u8 = 3;
 const SENSOR_OFFSET_R: isize = 2;
 const TURN_STRENGTH: f64 = PI / 6.;
+const SPAWN_TYPE: SpawnType = SpawnType::CircleIn;
+
+enum SpawnType {
+    Random,
+    CircleIn,
+    _CircleOut,
+    _Waterfall,
+    _Point // maybe
+    //whirlpool
+}
 
 #[derive(Copy, Clone)]
 struct Agent {
@@ -108,10 +120,24 @@ impl Simulation {
         let uniform: Uniform<f64> = Uniform::<f64>::new(0., 1.);
         let mut rng = thread_rng();
         let mut agents = [Agent::new(); AGENTS];
-        for i in 0..AGENTS {
-            agents[i].x = rng.sample(uniform) * WIDTH;
-            agents[i].y = rng.sample(uniform) * HEIGHT;
-            agents[i].ang = rng.sample(uniform) * 2. * PI;
+        match SPAWN_TYPE {
+            SpawnType::Random => {
+                for i in 0..AGENTS {
+                    agents[i].x = rng.sample(uniform) * WIDTH;
+                    agents[i].y = rng.sample(uniform) * HEIGHT;
+                    agents[i].ang = rng.sample(uniform) * 2. * PI;
+                }
+            }
+            SpawnType::CircleIn => {
+                for i in 0..AGENTS {
+                    let angle = rng.sample(uniform) * 2. * PI;
+                    let rad = rng.sample(uniform) * (HEIGHT / 2. - 1.);
+                    agents[i].x = WIDTH / 2. + angle.cos() * rad;
+                    agents[i].y = HEIGHT / 2. + angle.sin() * rad;
+                    agents[i].ang = angle + PI;
+                }
+            }
+            _ => {}
         }
         Simulation{agents}
     }
@@ -136,7 +162,7 @@ fn main() -> () {
                 img.put_pixel(sim.agents[i].x as u32, sim.agents[i].y as u32, Rgba([255, 0, 0, 255]));
             }
             image(&texture, c.transform, g);
-            img = brighten(&img, -2);
+            //img = brighten(&img, -2);
             //img = blur(&img, 0.5);
         });
     }
