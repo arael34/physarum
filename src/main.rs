@@ -24,8 +24,8 @@ const WIDTH: f64 = 600.;
 const HEIGHT: f64 = 600.;
 
 // sim settings
-const AGENTS: usize = 3000;
-const SENSOR_OFFSET_ANGLE: f32 = 0.5;
+const AGENTS: usize = 1000;
+const SENSOR_OFFSET_ANGLE: f64 = 0.3;
 const SENSOR_OFFSET_DST: u8 = 3;
 const SENSOR_OFFSET_R: isize = 2;
 const TURN_STRENGTH: f64 = PI / 6.;
@@ -83,8 +83,8 @@ impl Agent {
             self.ang -= rng * TURN_STRENGTH;
         }
     }
-    fn sense(&mut self, offset_angle: f32, img: &ImageBuffer<Rgba<u8>, Vec<u8>>) -> f64 {
-        let angle = self.ang + offset_angle as f64;
+    fn sense(&mut self, offset_angle: f64, img: &ImageBuffer<Rgba<u8>, Vec<u8>>) -> f64 {
+        let angle = self.ang + offset_angle;
         let center_x = (self.x + angle.cos() * SENSOR_OFFSET_DST as f64) as isize;
         let center_y = (self.y + angle.sin() * SENSOR_OFFSET_DST as f64) as isize;
         let mut sum: f64 = 0.;
