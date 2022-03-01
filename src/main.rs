@@ -28,10 +28,10 @@ const HEIGHT: f64 = 500.;
 
 // sim settings
 const AGENTS: usize = 1_000;
-const SENSOR_OFFSET_ANGLE: f64 = 0.3;
-const SENSOR_OFFSET_DST: u8 = 5;
+const SENSOR_OFFSET_ANGLE: f64 = PI / 8.;
+const SENSOR_OFFSET_DST: u8 = 14;
 const SENSOR_OFFSET_R: isize = 2;
-const TURN_STRENGTH: f64 = PI / 2.;
+const TURN_STRENGTH: f64 = PI / 4.;
 const SPAWN_TYPE: SpawnType = SpawnType::CircleIn;
 
 enum SpawnType {
@@ -89,7 +89,9 @@ impl Agent {
         let weight_left = self.sense(-SENSOR_OFFSET_ANGLE, img);
         let rng = thread_rng().gen_range(0., 1.);
         if weight_right < weight_forward && weight_forward > weight_left {}
-        else if weight_right == weight_left {}
+        else if weight_right == weight_left {
+            //self.ang += (rng - 0.5) * TURN_STRENGTH;
+        }
         else if weight_right > weight_left {
             self.ang += rng * TURN_STRENGTH;
         } else {
@@ -135,7 +137,7 @@ impl Simulation {
                     let rad = rng.sample(uniform) * (HEIGHT / 2. - 1.);
                     agent.x = WIDTH / 2. + angle.cos() * rad;
                     agent.y = HEIGHT / 2. + angle.sin() * rad;
-                    agent.ang = angle + PI;
+                    agent.ang = angle + 3. * PI / 4.;
                 }
             }
             _ => {}
@@ -163,7 +165,7 @@ fn main() -> () {
                 img.put_pixel(agent.x as u32, agent.y as u32, Rgba([0, 150, 150, 150]));
             }
             image(&texture, c.transform, g);
-            //img = brighten(&img, 5);
+            img = brighten(&img, 7);
             //img = blur(&img, 0.5);
         });
     }
