@@ -1,6 +1,8 @@
 extern crate piston_window;
-extern crate graphics;
+//extern crate graphics;
 extern crate opengl_graphics;
+extern crate rand;
+extern crate image;
 
 /*
 TODO
@@ -26,11 +28,11 @@ const WIDTH: f64 = 600.;
 const HEIGHT: f64 = 600.;
 
 // sim settings
-const AGENTS: usize = 1000;
+const AGENTS: usize = 1_000;
 const SENSOR_OFFSET_ANGLE: f64 = 0.3;
-const SENSOR_OFFSET_DST: u8 = 3;
+const SENSOR_OFFSET_DST: u8 = 5;
 const SENSOR_OFFSET_R: isize = 2;
-const TURN_STRENGTH: f64 = PI / 6.;
+const TURN_STRENGTH: f64 = PI / 8.;
 const SPAWN_TYPE: SpawnType = SpawnType::CircleIn;
 
 enum SpawnType {
@@ -162,7 +164,7 @@ fn main() -> () {
                 img.put_pixel(sim.agents[i].x as u32, sim.agents[i].y as u32, Rgba([255, 0, 0, 255]));
             }
             image(&texture, c.transform, g);
-            //img = brighten(&img, -2);
+            //img = brighten(&img, -5);
             //img = blur(&img, 0.5);
         });
     }
