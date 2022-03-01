@@ -6,11 +6,11 @@ extern crate image;
 
 /*
 TODO
-decide between ImageBuffer or RgbaImage for image
 clean up types, specifically in sense function
-still very 45 degrees ish
 store agents in vec(heap) instead of arr(stack)?
 spawn enum with angle = rngangle + pi/2
+clean up, try to boost performance
+better sense function(1 call instead of 3)
 */
 
 use piston_window::*;
@@ -159,8 +159,8 @@ fn main() -> () {
         window.draw_2d(&en, |c, g, _d| {
             clear([0., 0., 0., 1.], g);
             for i in 0..AGENTS {
-                Agent::check(&mut sim.agents[i], &img);
-                Agent::update(&mut sim.agents[i]);
+                sim.agents[i].check(&img);
+                sim.agents[i].update();
                 img.put_pixel(sim.agents[i].x as u32, sim.agents[i].y as u32, Rgba([255, 0, 0, 255]));
             }
             image(&texture, c.transform, g);
