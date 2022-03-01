@@ -1,0 +1,11 @@
+Slime simulation in rust, final version. Aiming for performance.
+
+Agent struct
+x
+y
+angle
+
+Trail struct
+x
+y
+lifetime
