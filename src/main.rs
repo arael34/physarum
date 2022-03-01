@@ -5,6 +5,8 @@ extern crate opengl_graphics;
 /*
 TODO
 decide between ImageBuffer or RgbaImage for image
+clean up types, specifically in sense function
+feels very 45 degree angle ish
 */
 
 use piston_window::*;
@@ -22,8 +24,10 @@ const WIDTH: f64 = 600.;
 const HEIGHT: f64 = 600.;
 
 // sim settings
-const AGENTS: usize = 100;
-const SENSOR_OFFSET_ANGLE: f32 = PI as f32 / 4.;
+const AGENTS: usize = 3000;
+const SENSOR_OFFSET_ANGLE: f32 = 0.5;
+const SENSOR_OFFSET_DST: u8 = 3;
+const SENSOR_OFFSET_R: isize = 2;
 const TURN_STRENGTH: f64 = PI / 6.;
 
 #[derive(Copy, Clone)]
@@ -70,16 +74,28 @@ impl Agent {
         let weight_forward = self.sense(0., img);
         let weight_right = self.sense(SENSOR_OFFSET_ANGLE, img);
         let weight_left = self.sense(-SENSOR_OFFSET_ANGLE, img);
+        let rng = thread_rng().gen_range(0., 1.);
         if weight_right < weight_forward && weight_forward > weight_left {}
         else if weight_right == weight_left {}
         else if weight_right > weight_left {
-            self.ang += TURN_STRENGTH;
+            self.ang += rng * TURN_STRENGTH;
         } else {
-            self.ang -= TURN_STRENGTH;
+            self.ang -= rng * TURN_STRENGTH;
         }
     }
     fn sense(&mut self, offset_angle: f32, img: &ImageBuffer<Rgba<u8>, Vec<u8>>) -> f64 {
-        0.
+        let angle = self.ang + offset_angle as f64;
+        let center_x = (self.x + angle.cos() * SENSOR_OFFSET_DST as f64) as isize;
+        let center_y = (self.y + angle.sin() * SENSOR_OFFSET_DST as f64) as isize;
+        let mut sum: f64 = 0.;
+        for x in center_x - SENSOR_OFFSET_R..=center_x + SENSOR_OFFSET_R {
+            for y in center_y - SENSOR_OFFSET_R..= center_y + SENSOR_OFFSET_R {
+                if x >= 0 && x < WIDTH as isize && y >= 0 && y < HEIGHT as isize {
+                    sum += (img.get_pixel(x as u32, y as u32)[3] / 255) as f64;
+                }
+            }
+        }
+        sum
     }
 }
 
@@ -89,15 +105,13 @@ struct Simulation {
 
 impl Simulation {
     fn new() -> Self {
-        let uniform_x = Uniform::<f64>::new(1., WIDTH);
-        let uniform_y = Uniform::<f64>::new(1., HEIGHT);
-        let uniform_ang = Uniform::<f64>::new(0., 2. * PI);
+        let uniform: Uniform<f64> = Uniform::<f64>::new(0., 1.);
         let mut rng = thread_rng();
         let mut agents = [Agent::new(); AGENTS];
         for i in 0..AGENTS {
-            agents[i].x = rng.sample(uniform_x);
-            agents[i].y = rng.sample(uniform_y);
-            agents[i].ang = rng.sample(uniform_ang);
+            agents[i].x = rng.sample(uniform) * WIDTH;
+            agents[i].y = rng.sample(uniform) * HEIGHT;
+            agents[i].ang = rng.sample(uniform) * 2. * PI;
         }
         Simulation{agents}
     }
@@ -122,7 +136,7 @@ fn main() -> () {
                 img.put_pixel(sim.agents[i].x as u32, sim.agents[i].y as u32, Rgba([255, 0, 0, 255]));
             }
             image(&texture, c.transform, g);
-            //img = brighten(&img, -5);
+            img = brighten(&img, -2);
             //img = blur(&img, 0.5);
         });
     }
