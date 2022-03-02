@@ -30,7 +30,7 @@ const SENSOR_OFFSET_DST: u8 = 20;
 const SENSOR_OFFSET_R: isize = 2;
 const TURN_STRENGTH: f64 = PI / 8.;
 const SPAWN_TYPE: SpawnType = SpawnType::Circle;
-const CIRCLE_ANGLE: f64 = PI; // for circle spawn type
+const CIRCLE_ANGLE: f64 = PI; // for circle spawn type, might not be needed
 
 #[allow(dead_code)]
 enum SpawnType {
@@ -183,7 +183,7 @@ fn main() -> () {
             for agent in sim.agents.iter_mut() {
                 agent.check(&img);
                 agent.update();
-                img.put_pixel(agent.x as u32, agent.y as u32, Rgba::<u8>([100, 0, 200, 255]));
+                img.put_pixel(agent.x as u32, agent.y as u32, Rgba::<u8>([200, 100, 100, 255]));
             }
             
             image(&texture, c.transform, g);
