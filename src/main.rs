@@ -7,11 +7,8 @@ extern crate rayon;
 /*
 TODO
 clean up types, specifically in sense function
-spawn enum with angle = rngangle + pi/2
 clean up, try to boost performance
 agents seem to stick to walls on the right and bottom sides
-benchmark rayon vs for loop agent processing
-maybe benchmark rayon vs for loop pixels?
 */
 
 use piston_window::*;
@@ -27,10 +24,10 @@ const WIDTH: f64 = 800.;
 const HEIGHT: f64 = 800.;
 
 // sim settings
-const AGENTS: usize = 10_000;
+const AGENTS: usize = 100_000;
 const SENSOR_OFFSET_ANGLE: f64 = PI / 10.;
 const SENSOR_OFFSET_DST: u8 = 20;
-const SENSOR_OFFSET_R: isize = 2;
+const SENSOR_R: isize = 2;
 const TURN_STRENGTH: f64 = PI / 8.;
 const SPAWN_TYPE: SpawnType = SpawnType::Circle;
 const CIRCLE_ANGLE: f64 = PI; // for circle spawn type, might not be needed
@@ -104,8 +101,8 @@ impl Agent {
         let center_x = (self.x + angle.cos() * SENSOR_OFFSET_DST as f64) as isize;
         let center_y = (self.y + angle.sin() * SENSOR_OFFSET_DST as f64) as isize;
         let mut sum: f64 = 0.;
-        for x in center_x - SENSOR_OFFSET_R..=center_x + SENSOR_OFFSET_R {
-            for y in center_y - SENSOR_OFFSET_R..= center_y + SENSOR_OFFSET_R {
+        for x in center_x - SENSOR_R..=center_x + SENSOR_R {
+            for y in center_y - SENSOR_R..= center_y + SENSOR_R {
                 if x >= 0 && x < WIDTH as isize && y >= 0 && y < HEIGHT as isize {
                     sum += img.get_pixel(x as u32, y as u32)[2] as f64 / 255.;
                 }
