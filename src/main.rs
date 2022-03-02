@@ -2,14 +2,16 @@ extern crate piston_window;
 extern crate opengl_graphics;
 extern crate rand;
 extern crate image;
+extern crate rayon;
 
 /*
 TODO
 clean up types, specifically in sense function
 spawn enum with angle = rngangle + pi/2
 clean up, try to boost performance
-better sense function(1 call instead of 3)
 agents seem to stick to walls on the right and bottom sides
+benchmark rayon vs for loop agent processing
+maybe benchmark rayon vs for loop pixels?
 */
 
 use piston_window::*;
@@ -18,13 +20,14 @@ use rand::*;
 use rand::distributions::Uniform;
 use std::f64::consts::PI;
 use ::image::{ImageBuffer, Rgba};
+use rayon::prelude::*;
 
 // window settings
 const WIDTH: f64 = 800.;
 const HEIGHT: f64 = 800.;
 
 // sim settings
-const AGENTS: usize = 50_000;
+const AGENTS: usize = 10_000;
 const SENSOR_OFFSET_ANGLE: f64 = PI / 10.;
 const SENSOR_OFFSET_DST: u8 = 20;
 const SENSOR_OFFSET_R: isize = 2;
@@ -178,14 +181,15 @@ fn main() -> () {
 
     while let Some(en) = window.next() {
         let texture: G2dTexture = Texture::from_image(&mut window.create_texture_context(), &img, &TextureSettings::new()).unwrap();
+        //let mut pixels: Vec<&mut Rgba<u8>> = Vec::new();
         window.draw_2d(&en, |c, g, _d| {
-            
-            for agent in sim.agents.iter_mut() {
+            sim.agents.par_iter_mut().for_each(|agent| {
                 agent.check(&img);
                 agent.update();
+            });
+            for agent in &sim.agents {
                 img.put_pixel(agent.x as u32, agent.y as u32, Rgba::<u8>([200, 100, 100, 255]));
             }
-            
             image(&texture, c.transform, g);
             for pixel in img.pixels_mut() {
                 pixel[0] = reduce_pixel(pixel[0]); //for different colors
