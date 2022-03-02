@@ -25,8 +25,8 @@ const HEIGHT: f64 = 1000.;
 
 // sim settings
 const AGENTS: usize = 100_000;
-const SENSOR_OFFSET_ANGLE: f64 = PI / 10.;
-const SENSOR_OFFSET_DST: u8 = 20;
+const SENSOR_OFFSET_ANGLE: f64 = PI / 8.;
+const SENSOR_OFFSET_DST: u8 = 15;
 const SENSOR_R: isize = 2;
 const TURN_STRENGTH: f64 = PI / 8.;
 const SPAWN_TYPE: SpawnType = SpawnType::Circle;
@@ -85,7 +85,7 @@ impl Agent {
         let weight_forward = self.sense(0., img);
         let weight_right = self.sense(SENSOR_OFFSET_ANGLE, img);
         let weight_left = self.sense(-SENSOR_OFFSET_ANGLE, img);
-        let rng = thread_rng().gen_range(0., 1.);
+        let rng = thread_rng().gen_range(0., 1.01);
         if weight_right < weight_forward && weight_forward > weight_left {}
         else if weight_right == weight_left {
             self.ang += (rng - 0.5) * 0.2 * TURN_STRENGTH;
@@ -178,9 +178,10 @@ fn main() -> () {
 
     let mut img = ImageBuffer::new(WIDTH as u32, HEIGHT as u32);
 
-    while let Some(en) = window.next() {
+    let mut events = Events::new(EventSettings::new());
+    events.set_max_fps(144);
+    while let Some(en) = events.next(&mut window) {
         let texture: G2dTexture = Texture::from_image(&mut window.create_texture_context(), &img, &TextureSettings::new()).unwrap();
-        //let mut pixels: Vec<&mut Rgba<u8>> = Vec::new();
         window.draw_2d(&en, |c, g, _d| {
             sim.agents.par_iter_mut().for_each(|agent| {
                 agent.check(&img);
