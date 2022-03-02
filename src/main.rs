@@ -179,7 +179,7 @@ fn main() -> () {
     let mut img = ImageBuffer::new(WIDTH as u32, HEIGHT as u32);
 
     let mut events = Events::new(EventSettings::new());
-    events.set_max_fps(144);
+    events.set_max_fps(60);
     while let Some(en) = events.next(&mut window) {
         let texture: G2dTexture = Texture::from_image(&mut window.create_texture_context(), &img, &TextureSettings::new()).unwrap();
         window.draw_2d(&en, |c, g, _d| {
@@ -188,7 +188,7 @@ fn main() -> () {
                 agent.update();
             });
             for agent in &sim.agents {
-                img.put_pixel(agent.x as u32, agent.y as u32, Rgba::<u8>([200, 0, 200, 255]));
+                img.put_pixel(agent.x as u32, agent.y as u32, Rgba::<u8>([0, 150, 200, 255]));
             }
             image(&texture, c.transform, g);
             for pixel in img.pixels_mut() {
