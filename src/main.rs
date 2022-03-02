@@ -20,8 +20,8 @@ use ::image::{ImageBuffer, Rgba};
 use rayon::prelude::*;
 
 // window settings
-const WIDTH: f64 = 800.;
-const HEIGHT: f64 = 800.;
+const WIDTH: f64 = 1000.;
+const HEIGHT: f64 = 1000.;
 
 // sim settings
 const AGENTS: usize = 100_000;
@@ -104,7 +104,9 @@ impl Agent {
         for x in center_x - SENSOR_R..=center_x + SENSOR_R {
             for y in center_y - SENSOR_R..= center_y + SENSOR_R {
                 if x >= 0 && x < WIDTH as isize && y >= 0 && y < HEIGHT as isize {
-                    sum += img.get_pixel(x as u32, y as u32)[2] as f64 / 255.;
+                    let pixel = img.get_pixel(x as u32, y as u32);
+                    sum += pixel[2] as f64 / 255.;
+                    sum += pixel[1] as f64 / 255.;
                 }
             }
         }
@@ -159,8 +161,8 @@ impl Simulation {
 }
 
 fn reduce_pixel(value: u8) -> u8 {
-    if value > 1 {
-        return value - 1;
+    if value > 3 {
+        return value - 3;
     } else if value > 0 {
         return 0;
     }
@@ -185,7 +187,7 @@ fn main() -> () {
                 agent.update();
             });
             for agent in &sim.agents {
-                img.put_pixel(agent.x as u32, agent.y as u32, Rgba::<u8>([200, 100, 100, 255]));
+                img.put_pixel(agent.x as u32, agent.y as u32, Rgba::<u8>([200, 0, 200, 255]));
             }
             image(&texture, c.transform, g);
             for pixel in img.pixels_mut() {
