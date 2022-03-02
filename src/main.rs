@@ -24,12 +24,12 @@ const WIDTH: f64 = 800.;
 const HEIGHT: f64 = 800.;
 
 // sim settings
-const AGENTS: usize = 100_000;
+const AGENTS: usize = 10_000;
 const SENSOR_OFFSET_ANGLE: f64 = PI / 10.;
 const SENSOR_OFFSET_DST: u8 = 20;
 const SENSOR_R: isize = 2;
 const TURN_STRENGTH: f64 = PI / 8.;
-const SPAWN_TYPE: SpawnType = SpawnType::Circle;
+const SPAWN_TYPE: SpawnType = SpawnType::Random;
 const CIRCLE_ANGLE: f64 = PI; // for circle spawn type, might not be needed
 
 #[allow(dead_code)]
@@ -45,11 +45,12 @@ enum SpawnType {
 struct Agent {
     x: f64,
     y: f64,
-    ang: f64
+    ang: f64,
+    mask: [u8; 3]
 }
 
 impl Agent {
-    fn new() -> Self { Agent{x: 0., y: 0., ang: 0.} }
+    fn new() -> Self { Agent{x: 0., y: 0., ang: 0., mask: [0, 255, 0]} }
     fn update(&mut self) {
         let mut new_x = self.x + self.ang.cos();
         let mut new_y = self.y + self.ang.sin();
@@ -104,7 +105,15 @@ impl Agent {
         for x in center_x - SENSOR_R..=center_x + SENSOR_R {
             for y in center_y - SENSOR_R..= center_y + SENSOR_R {
                 if x >= 0 && x < WIDTH as isize && y >= 0 && y < HEIGHT as isize {
-                    sum += img.get_pixel(x as u32, y as u32)[2] as f64 / 255.;
+                    //sum += img.get_pixel(x as u32, y as u32)[2] as f64 / 255.;
+                    let pixel = img.get_pixel(x as u32, y as u32);
+                    /* 
+                    sum += ((self.mask[0] as f64 - 150.) * pixel[0] as f64) / 255.;
+                    sum += ((self.mask[1] as f64 - 150.) * pixel[1] as f64) / 255.;
+                    sum += ((self.mask[2] as f64 - 150.) * pixel[2] as f64) / 255.;
+                    */
+                    let rgb = vec!(pixel[0], pixel[1], pixel[2]);
+                    sum += self.mask.iter().zip(rgb.iter()).map(|(x, y)| ((*x as f64) / 255.) * *y as f64).sum::<f64>();
                 }
             }
         }
@@ -127,6 +136,14 @@ impl Simulation {
                     agent.x = rng.sample(uniform) * WIDTH;
                     agent.y = rng.sample(uniform) * HEIGHT;
                     agent.ang = rng.sample(uniform) * 2. * PI;
+                    if agent.x as isize % 3 == 0 {
+                        agent.mask = [100, 100, (agent.x / 3.) as u8];
+                    } else if agent.x as isize % 3 == 1 {
+                        agent.mask = [(agent.x / 3.) as u8, 100, 100];
+                    } else {
+                        agent.mask = [100, (agent.x / 3.) as u8, 100];
+                    }
+                    
                 }
             }
             SpawnType::Circle => {
@@ -185,7 +202,7 @@ fn main() -> () {
                 agent.update();
             });
             for agent in &sim.agents {
-                img.put_pixel(agent.x as u32, agent.y as u32, Rgba::<u8>([200, 100, 100, 255]));
+                img.put_pixel(agent.x as u32, agent.y as u32, Rgba::<u8>([agent.mask[0], agent.mask[1], agent.mask[2], 255]));
             }
             image(&texture, c.transform, g);
             for pixel in img.pixels_mut() {
