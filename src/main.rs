@@ -24,12 +24,12 @@ const WIDTH: f64 = 800.;
 const HEIGHT: f64 = 800.;
 
 // sim settings
-const AGENTS: usize = 10_000;
+const AGENTS: usize = 100_000;
 const SENSOR_OFFSET_ANGLE: f64 = PI / 10.;
 const SENSOR_OFFSET_DST: u8 = 20;
 const SENSOR_R: isize = 2;
-const TURN_STRENGTH: f64 = PI / 8.;
-const SPAWN_TYPE: SpawnType = SpawnType::Random;
+const TURN_STRENGTH: f64 = PI / 10.;
+const SPAWN_TYPE: SpawnType = SpawnType::Circle;
 const CIRCLE_ANGLE: f64 = PI; // for circle spawn type, might not be needed
 
 #[allow(dead_code)]
@@ -113,7 +113,7 @@ impl Agent {
                     sum += ((self.mask[2] as f64 - 150.) * pixel[2] as f64) / 255.;
                     */
                     let rgb = vec!(pixel[0], pixel[1], pixel[2]);
-                    sum += self.mask.iter().zip(rgb.iter()).map(|(x, y)| ((*x as f64) / 255.) * *y as f64).sum::<f64>();
+                    sum += self.mask.iter().zip(rgb.iter()).map(|(x, y)| ((*x as f64 - 125.) / 255.) * *y as f64).sum::<f64>();
                 }
             }
         }
@@ -136,14 +136,8 @@ impl Simulation {
                     agent.x = rng.sample(uniform) * WIDTH;
                     agent.y = rng.sample(uniform) * HEIGHT;
                     agent.ang = rng.sample(uniform) * 2. * PI;
-                    if agent.x as isize % 3 == 0 {
-                        agent.mask = [100, 100, (agent.x / 3.) as u8];
-                    } else if agent.x as isize % 3 == 1 {
-                        agent.mask = [(agent.x / 3.) as u8, 100, 100];
-                    } else {
-                        agent.mask = [100, (agent.x / 3.) as u8, 100];
-                    }
-                    
+                    let tp = (rng.sample(uniform) * 2.) as u8;
+                    agent.mask = if tp == 0 {[0, 200, 0]} else {[0, 0, 200]};
                 }
             }
             SpawnType::Circle => {
@@ -153,6 +147,8 @@ impl Simulation {
                     agent.x = WIDTH / 2. + angle.cos() * rad;
                     agent.y = HEIGHT / 2. + angle.sin() * rad;
                     agent.ang = angle + CIRCLE_ANGLE;
+                    let tp = (rng.sample(uniform) * 2.) as u8;
+                    agent.mask = if tp == 0 {[0, 200, 0]} else {[0, 0, 200]};
                 }
             }
             SpawnType::Waterfall => {
@@ -176,8 +172,8 @@ impl Simulation {
 }
 
 fn reduce_pixel(value: u8) -> u8 {
-    if value > 1 {
-        return value - 1;
+    if value > 2 {
+        return value - 2;
     } else if value > 0 {
         return 0;
     }
