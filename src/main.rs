@@ -37,8 +37,8 @@ enum SpawnType {
     Random,
     Circle,
     Waterfall,
-    Point // maybe
-    //whirlpool
+    Point,
+    Lines
 }
 
 #[derive(Copy, Clone)]
