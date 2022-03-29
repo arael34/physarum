@@ -20,11 +20,11 @@ use ::image::{ImageBuffer, Rgba};
 use rayon::prelude::*;
 
 // window settings
-const WIDTH: f64 = 1000.;
-const HEIGHT: f64 = 1000.;
+const WIDTH: f64 = 400.;
+const HEIGHT: f64 = 400.;
 
 // sim settings
-const AGENTS: usize = 100_000;
+const AGENTS: usize = 50_000;
 const SENSOR_OFFSET_ANGLE: f64 = PI / 8.;
 const SENSOR_OFFSET_DST: u8 = 15;
 const SENSOR_R: isize = 2;
@@ -137,7 +137,7 @@ impl Simulation {
                     let rad = rng.sample(uniform) * (HEIGHT / 2. - 1.);
                     agent.x = WIDTH / 2. + angle.cos() * rad;
                     agent.y = HEIGHT / 2. + angle.sin() * rad;
-                    agent.ang = angle + CIRCLE_ANGLE;
+                    agent.ang = angle * CIRCLE_ANGLE;
                 }
             }
             SpawnType::Waterfall => {
