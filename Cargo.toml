@@ -7,7 +7,7 @@ edition = "2021"
 
 [dependencies]
 piston_window = "*"
-rand = "0.6.5"
-piston2d-opengl_graphics = "0.74.0"
+rand = "*"
+piston2d-opengl_graphics = "*"
 image = "*"
-rayon = "1.5"
+rayon = "*"
