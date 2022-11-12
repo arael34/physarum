@@ -20,16 +20,16 @@ use ::image::{ImageBuffer, Rgba};
 use rayon::prelude::*;
 
 // window settings
-const WIDTH: f64 = 400.;
-const HEIGHT: f64 = 400.;
+const WIDTH: f64 = 500.;
+const HEIGHT: f64 = 500.;
 
 // sim settings
-const AGENTS: usize = 50_000;
+const AGENTS: usize = 20_000;
 const SENSOR_OFFSET_ANGLE: f64 = PI / 8.;
 const SENSOR_OFFSET_DST: u8 = 15;
 const SENSOR_R: isize = 2;
 const TURN_STRENGTH: f64 = PI / 8.;
-const SPAWN_TYPE: SpawnType = SpawnType::Circle;
+const SPAWN_TYPE: SpawnType = SpawnType::Point;
 const CIRCLE_ANGLE: f64 = PI; // for circle spawn type, might not be needed
 
 #[allow(dead_code)]
@@ -56,26 +56,18 @@ impl Agent {
         let mut rng = thread_rng();
         if new_x > WIDTH - 1. || new_x < 0. {
             new_x = if 
-                        if new_x < 0. 
-                            {0.} 
-                        else 
-                            {new_x} 
-                    > WIDTH - 1.
-                        {WIDTH - 1.} 
-                    else 
-                        {new_x};
+                if new_x < 0. { 0. } else { new_x } > WIDTH - 1.
+                    { WIDTH - 1. } 
+                else 
+                    {new_x};
             self.ang = rng.gen_range(0., 2. * PI);
         }
         if new_y > HEIGHT - 1. || new_y < 0. {
             new_y = if 
-                        if new_y < 0. 
-                            {0.} 
-                        else 
-                            {new_y} 
-                    > HEIGHT - 1.
-                        {HEIGHT - 1.} 
-                    else 
-                        {new_y};
+                if new_y < 0. { 0. } else { new_y } > HEIGHT - 1.
+                    {HEIGHT - 1.} 
+                else 
+                    {new_y};
             self.ang = rng.gen_range(0., 2. * PI);
         }
         self.x = new_x;
@@ -188,7 +180,7 @@ fn main() -> () {
                 agent.update();
             });
             for agent in &sim.agents {
-                img.put_pixel(agent.x as u32, agent.y as u32, Rgba::<u8>([0, 150, 200, 255]));
+                img.put_pixel(agent.x as u32, agent.y as u32, Rgba::<u8>([0, 150, 200, 50]));
             }
             image(&texture, c.transform, g);
             for pixel in img.pixels_mut() {
