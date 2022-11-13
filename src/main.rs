@@ -7,12 +7,11 @@ extern crate rayon;
 /*
 TODO
 clean up types, specifically in sense function
-clean up, try to boost performance
 agents seem to stick to walls on the right and bottom sides
 */
 
 use piston_window::*;
-use opengl_graphics::OpenGL;//, Filter, GlGraphics, TextureSettings};
+use opengl_graphics::OpenGL;
 use rand::*;
 use rand::distributions::Uniform;
 use std::f64::consts::PI;
@@ -29,7 +28,7 @@ const SENSOR_OFFSET_ANGLE: f64 = PI / 8.;
 const SENSOR_OFFSET_DST: u8 = 15;
 const SENSOR_R: isize = 2;
 const TURN_STRENGTH: f64 = PI / 8.;
-const SPAWN_TYPE: SpawnType = SpawnType::Point;
+const SPAWN_TYPE: SpawnType = SpawnType::Random;
 const CIRCLE_ANGLE: f64 = PI; // for circle spawn type, might not be needed
 
 #[allow(dead_code)]
@@ -184,7 +183,7 @@ fn main() -> () {
             }
             image(&texture, c.transform, g);
             for pixel in img.pixels_mut() {
-                pixel[0] = reduce_pixel(pixel[0]); //for different colors
+                pixel[0] = reduce_pixel(pixel[0]); // for different colors
                 pixel[1] = reduce_pixel(pixel[1]);
                 pixel[2] = reduce_pixel(pixel[2]);
             }
