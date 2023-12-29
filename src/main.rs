@@ -11,11 +11,11 @@ agents seem to stick to walls on the right and bottom sides
 */
 
 use piston_window::*;
+use image::{ImageBuffer, Rgba};
 use opengl_graphics::OpenGL;
 use rand::*;
 use rand::distributions::Uniform;
 use std::f64::consts::PI;
-use ::image::{ImageBuffer, Rgba};
 use rayon::prelude::*;
 
 // window settings
@@ -59,7 +59,7 @@ impl Agent {
                     { WIDTH - 1. } 
                 else 
                     {new_x};
-            self.ang = rng.gen_range(0., 2. * PI);
+            self.ang = rng.gen_range(0.0..2. * PI);
         }
         if new_y > HEIGHT - 1. || new_y < 0. {
             new_y = if 
@@ -67,7 +67,7 @@ impl Agent {
                     {HEIGHT - 1.} 
                 else 
                     {new_y};
-            self.ang = rng.gen_range(0., 2. * PI);
+            self.ang = rng.gen_range(0.0..2. * PI);
         }
         self.x = new_x;
         self.y = new_y;
@@ -76,7 +76,7 @@ impl Agent {
         let weight_forward = self.sense(0., img);
         let weight_right = self.sense(SENSOR_OFFSET_ANGLE, img);
         let weight_left = self.sense(-SENSOR_OFFSET_ANGLE, img);
-        let rng = thread_rng().gen_range(0., 1.01);
+        let rng = thread_rng().gen_range(0.0..1.01);
         if weight_right < weight_forward && weight_forward > weight_left {}
         else if weight_right == weight_left {
             self.ang += (rng - 0.5) * 0.2 * TURN_STRENGTH;
