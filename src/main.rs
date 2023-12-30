@@ -4,6 +4,8 @@ extern crate rand;
 extern crate image;
 extern crate rayon;
 
+mod settings;
+
 /*
 TODO
 clean up types, specifically in sense function
@@ -18,27 +20,7 @@ use rand::distributions::Uniform;
 use std::f64::consts::PI;
 use rayon::prelude::*;
 
-// window settings
-const WIDTH: f64 = 500.;
-const HEIGHT: f64 = 500.;
-
-// sim settings
-const AGENTS: usize = 20_000;
-const SENSOR_OFFSET_ANGLE: f64 = PI / 8.;
-const SENSOR_OFFSET_DST: u8 = 15;
-const SENSOR_R: isize = 2;
-const TURN_STRENGTH: f64 = PI / 8.;
-const SPAWN_TYPE: SpawnType = SpawnType::Random;
-const CIRCLE_ANGLE: f64 = PI; // for circle spawn type, might not be needed
-
-#[allow(dead_code)]
-enum SpawnType {
-    Random,
-    Circle,
-    Waterfall,
-    Point,
-    Lines
-}
+use settings::*;
 
 #[derive(Copy, Clone)]
 struct Agent {
@@ -179,7 +161,7 @@ fn main() -> () {
                 agent.update();
             });
             for agent in &sim.agents {
-                img.put_pixel(agent.x as u32, agent.y as u32, Rgba::<u8>([0, 150, 200, 50]));
+                img.put_pixel(agent.x as u32, agent.y as u32, AGENT_COLOR);
             }
             image(&texture, c.transform, g);
             for pixel in img.pixels_mut() {
