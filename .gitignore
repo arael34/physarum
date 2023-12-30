@@ -1,4 +1,4 @@
 /target
 .DS_Store
 Cargo.lock
-settings.rs # Any changes to settings.rs shouldn't trigger git changes.
+src/config.rs

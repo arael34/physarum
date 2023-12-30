@@ -12,7 +12,7 @@ pub const SENSOR_OFFSET_ANGLE: f64 = PI / 8.;
 pub const SENSOR_OFFSET_DST: u8 = 15;
 pub const SENSOR_R: isize = 2;
 pub const TURN_STRENGTH: f64 = PI / 8.;
-pub const SPAWN_TYPE: SpawnType = SpawnType::Point;
+pub const SPAWN_TYPE: SpawnType = SpawnType::Waterfall;
 pub const CIRCLE_ANGLE: f64 = PI; // for circle spawn type, might not be needed
 
 #[allow(dead_code)]

@@ -18,8 +18,8 @@ use rand::distributions::Uniform;
 use std::f64::consts::PI;
 use rayon::prelude::*;
 
-mod settings;
-use settings::*;
+mod config;
+use config::*;
 
 #[derive(Copy, Clone)]
 struct Agent {
