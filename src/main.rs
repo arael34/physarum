@@ -4,8 +4,6 @@ extern crate rand;
 extern crate image;
 extern crate rayon;
 
-mod settings;
-
 /*
 TODO
 clean up types, specifically in sense function
@@ -20,6 +18,7 @@ use rand::distributions::Uniform;
 use std::f64::consts::PI;
 use rayon::prelude::*;
 
+mod settings;
 use settings::*;
 
 #[derive(Copy, Clone)]
