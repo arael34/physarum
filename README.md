@@ -1,4 +1,4 @@
-## Physarum simulation written in Rust, using the Piston engine.
+# Physarum
 
 <div>
     <img src="images/physarum1.png" width="200px" />
@@ -7,7 +7,7 @@
     <img src="images/physarum4.png" width="200px" />
 </div>
 
-Complex, almost organic patterns can emerge from simple rules. Inspired by Sebastian Lague.
+Complex, organic patterns can emerge from simple rules. Inspired by Sebastian Lague and built using the Piston engine.
 
 ### Run for yourself:
 Make sure you have cargo and git installed:
