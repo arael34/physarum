@@ -145,7 +145,7 @@ fn main() -> () {
     let mut sim = Simulation::new();
 
     let opengl = OpenGL::V3_2;
-    let mut window:PistonWindow = WindowSettings::new("Simulation", [WIDTH, HEIGHT])
+    let mut window:PistonWindow = WindowSettings::new("physarum", [WIDTH, HEIGHT])
                                   .graphics_api(opengl).exit_on_esc(true).build().unwrap();
 
     let mut img = ImageBuffer::new(WIDTH as u32, HEIGHT as u32);
